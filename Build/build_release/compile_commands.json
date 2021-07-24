@@ -1,7 +1,7 @@
 [
 {
   "directory": "/home/micuks/Code/AutoPilot/Sample/Build/build_release/PredefinedRouteSample",
-  "command": "/usr/bin/clang++  -DNOMINMAX -DUNICODE -D_ITERATOR_DEBUG_LEVEL=0 -D_UNICODE -I/home/micuks/Code/AutoPilot/Sample/Autopilot/PredefinedRouteSample/include -I/home/micuks/Code/AutoPilot/Sample/Build/../include   -stdlib=libstdc++ -I/usr/include/libcxxabi -std=c++14 -static-libstdc++ -O3 -DNDEBUG   -std=gnu++14 -o CMakeFiles/PredefinedRoute.dir/src/PredefinedRouteSample.cpp.o -c /home/micuks/Code/AutoPilot/Sample/Autopilot/PredefinedRouteSample/src/PredefinedRouteSample.cpp",
+  "command": "/usr/bin/clang++  -DNOMINMAX -DUNICODE -D_ITERATOR_DEBUG_LEVEL=0 -D_UNICODE -I/home/micuks/Code/AutoPilot/Sample/Autopilot/PredefinedRouteSample/include -I/home/micuks/Code/AutoPilot/Sample/Build/../include   -stdlib=libstdc++ -I/usr/include/libcxxabi -std=c++14 -O3 -DNDEBUG   -std=gnu++14 -o CMakeFiles/PredefinedRoute.dir/src/PredefinedRouteSample.cpp.o -c /home/micuks/Code/AutoPilot/Sample/Autopilot/PredefinedRouteSample/src/PredefinedRouteSample.cpp",
   "file": "/home/micuks/Code/AutoPilot/Sample/Autopilot/PredefinedRouteSample/src/PredefinedRouteSample.cpp"
 },
 {

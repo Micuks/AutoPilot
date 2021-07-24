@@ -30,7 +30,7 @@ void getTargetPath(const SSD::SimPoint3D pos, SSD::SimPoint3DVector &route)
 
 		//std::cout << "wayPointsSize:" << pWaypoints->wayPointsSize << std::endl;
 		if ((pWaypoints->wayPointsSize) >= 2) {
-			//SSD::SimPoint3DVector route;
+			SSD::SimPoint3DVector route;
 			if (SimOneSM::GetPredefinedRoute(route)) {
 				if (CLOUD_PLATFORM)
 					SimOneAPI::bridgeLogOutput(ELogLevel_Type::ELogLevelDebug, "route path size:%d", route.size());
@@ -39,7 +39,7 @@ void getTargetPath(const SSD::SimPoint3D pos, SSD::SimPoint3DVector &route)
 			}
 		}
 		else {
-			//SSD::SimPoint3D pos(Gps.posX, Gps.posY, Gps.posZ);
+			SSD::SimPoint3D pos(Gps.posX, Gps.posY, Gps.posZ);
 			SSD::SimString laneId = SampleGetNearMostLane(pos);
 			HDMapStandalone::MLaneInfo info;
 			if (SimOneSM::GetLaneSample(laneId, info)) {
@@ -151,7 +151,7 @@ int main()
 	SSD::SimPoint3D pos(Gps.posX, Gps.posY, Gps.posZ);
 	getTargetPath(pos, route);
 
-	/*if (SimOneSM::GetWayPoints(pWaypoints.get()))
+	if (SimOneSM::GetWayPoints(pWaypoints.get()))
 	{
 		std::cout << "wayPointsSize:" << pWaypoints->wayPointsSize << std::endl;
 		if ((pWaypoints->wayPointsSize) >= 2) {
@@ -175,16 +175,16 @@ int main()
 	}
 	else {
 		std::cout << "mainVehicle not set path !!!" << std::endl;
-	}*/
+	}
 		
 
-	/*SSD::SimPoint3DVector route;
+	//SSD::SimPoint3DVector route;
 	if (SimOneSM::GetPredefinedRoute(route)) {
 		if (CLOUD_PLATFORM)
 			SimOneAPI::bridgeLogOutput(ELogLevel_Type::ELogLevelDebug, "route path size:%d\n", route.size());
 		else
 			std::cout << "route path size:" << route.size() << std::endl;
-	}*/
+	}
 
 	while (1)
 	{
@@ -208,11 +208,11 @@ int main()
 			std::cout << "steering:" << steering << std::endl;
 
 		if ((int(sqrtf(pow(Gps.velX, 2) + pow(Gps.velY, 2))) * 3.6)>40) {
-			//UtilDriver::setDriver(Gps.timestamp, 0, 0.1, steering);
+			UtilDriver::setDriver(Gps.timestamp, 0, 0.1, steering);
 
 		}
 		else
-			//UtilDriver::setDriver(Gps.timestamp, 0.1, 0, steering);
+			UtilDriver::setDriver(Gps.timestamp, 0.1, 0, steering);
 		SimOneAPI::NextFrame(frame);
 	}
 }
