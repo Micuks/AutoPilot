@@ -1,15 +1,18 @@
 cmake_minimum_required(VERSION 3.8.0)
+set(UNIX 1)
 set(Cloud_Platform 1)
 IF (UNIX)
 	set(CMAKE_C_COMPILER "/usr/bin/clang")
 	set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -I/usr/include/libcxxabi")
-	set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++ -I/usr/include/libcxxabi")
+	set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -stdlib=libstdc++ -lc++abi")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 ENDIF()
 
 add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
  
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++") 
+set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 # top project
 project(SimOneIOAPISample VERSION 3.0.0 LANGUAGES C CXX)
 

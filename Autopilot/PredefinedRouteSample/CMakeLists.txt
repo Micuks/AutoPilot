@@ -1,9 +1,10 @@
-
-# set(CMAKE_C_COMPILER "/usr/local/gcc")
-# set(CMAKE_CXX_COMPILER "/usr/bin/g++")
-
+#set(CMAKE_C_COMPILER "/usr/local/gcc")
+#set(CMAKE_CXX_COMPILER "/usr/bin/g++")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++") 
+# -stdlib=libstdc++"
 add_executable(PredefinedRoute "")
 
+set (UNIX 1)
 
 file(GLOB_RECURSE srcs *.h *.hh *i *.hpp *.c *.cc *.cpp *.py)
 file(GLOB_RECURSE headers *.h)
@@ -20,6 +21,7 @@ include_directories("${INCLUDE_DIR}")
 
 # find_package(OpenCV REQUIRED)
 # target_link_libraries(image ${OpenCV_LIBS})
+
 
 IF (WIN32)
 	add_definitions(-D_WIN32_WINNT=0x0501)
@@ -50,15 +52,16 @@ ELSEIF (UNIX)
         # target_link_libraries(image_cv debug ${OpenCV_LIBS})
         # target_link_libraries(image_cv optimized ${OpenCV_LIBS})
 
-	target_link_libraries(PredefinedRoute debug ${LIB_DIR}/libSimOneIOAPI.so)
-        target_link_libraries(PredefinedRoute optimized ${LIB_DIR}/libSimOneIOAPI.so -lpthread)
-        target_link_libraries(PredefinedRoute debug /usr/lib/x86_64-linux-gnu/libcurl.so.4)
-        target_link_libraries(PredefinedRoute optimized /usr/lib/x86_64-linux-gnu/libcurl.so.4)
-        target_link_libraries(PredefinedRoute debug ${LIB_DIR}/libSSD.so)
-        target_link_libraries(PredefinedRoute optimized ${LIB_DIR}/libSSD.so -lpthread)
-        target_link_libraries(PredefinedRoute debug ${LIB_DIR}/libHDMapModule.so)
-        target_link_libraries(PredefinedRoute optimized ${LIB_DIR}/libHDMapModule.so)
-    
+	    target_link_libraries(PredefinedRoute debug ${LIB_DIR}/libSimOneIOAPI.so )
+        target_link_libraries(PredefinedRoute optimized ${LIB_DIR}/libSimOneIOAPI.so -lpthread )
+        target_link_libraries(PredefinedRoute debug /usr/lib/x86_64-linux-gnu/libcurl.so.4 )
+        target_link_libraries(PredefinedRoute optimized /usr/lib/x86_64-linux-gnu/libcurl.so.4 )
+        target_link_libraries(PredefinedRoute debug ${LIB_DIR}/libSSD.so )
+        target_link_libraries(PredefinedRoute optimized ${LIB_DIR}/libSSD.so -lpthread )
+        target_link_libraries(PredefinedRoute debug ${LIB_DIR}/libHDMapModule.so )
+        target_link_libraries(PredefinedRoute optimized ${LIB_DIR}/libHDMapModule.so )
+        include_directories(/usr/include/c++/9/)
+
         add_custom_command(TARGET PredefinedRoute
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${LIB_DIR}/libSimOneIOAPI.so ${BINARY_OUT_PATH}/libSimOneIOAPI.so
