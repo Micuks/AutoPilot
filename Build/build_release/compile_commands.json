@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/home/micuks/Code/AutoPilot/New_Sample/Build/build_release/PredefinedRouteSample",
+  "command": "/usr/bin/clang++  -DNOMINMAX -DUNICODE -D_ITERATOR_DEBUG_LEVEL=0 -D_UNICODE -I/home/micuks/Code/AutoPilot/New_Sample/Autopilot/PredefinedRouteSample/include -I/home/micuks/Code/AutoPilot/New_Sample/Build/../include   -stdlib=libc++ -I/usr/include/libcxxabi -std=c++14 -O3 -DNDEBUG   -std=gnu++14 -o CMakeFiles/PredefinedRoute.dir/src/PredefinedRouteSample.cpp.o -c /home/micuks/Code/AutoPilot/New_Sample/Autopilot/PredefinedRouteSample/src/PredefinedRouteSample.cpp",
+  "file": "/home/micuks/Code/AutoPilot/New_Sample/Autopilot/PredefinedRouteSample/src/PredefinedRouteSample.cpp"
+},
+{
+  "directory": "/home/micuks/Code/AutoPilot/New_Sample/Build/build_release/AEB",
+  "command": "/usr/bin/clang++  -DNOMINMAX -DUNICODE -D_ITERATOR_DEBUG_LEVEL=0 -D_UNICODE -I/home/micuks/Code/AutoPilot/New_Sample/Build/../include   -stdlib=libc++ -I/usr/include/libcxxabi -std=c++14 -O3 -DNDEBUG   -std=gnu++14 -o CMakeFiles/AEB.dir/src/AEBSample.cpp.o -c /home/micuks/Code/AutoPilot/New_Sample/Workshop/AEB/src/AEBSample.cpp",
+  "file": "/home/micuks/Code/AutoPilot/New_Sample/Workshop/AEB/src/AEBSample.cpp"
+},
+{
+  "directory": "/home/micuks/Code/AutoPilot/New_Sample/Build/build_release/AVP",
+  "command": "/usr/bin/clang++  -DNOMINMAX -DUNICODE -D_ITERATOR_DEBUG_LEVEL=0 -D_UNICODE -I/home/micuks/Code/AutoPilot/New_Sample/Build/../include -I/home/micuks/Code/AutoPilot/New_Sample/Workshop/AVP/eigen/3.2.3/include/eigen3   -stdlib=libc++ -I/usr/include/libcxxabi -std=c++14 -O3 -DNDEBUG   -std=gnu++14 -o CMakeFiles/AVP.dir/src/AVPPlanner.cpp.o -c /home/micuks/Code/AutoPilot/New_Sample/Workshop/AVP/src/AVPPlanner.cpp",
+  "file": "/home/micuks/Code/AutoPilot/New_Sample/Workshop/AVP/src/AVPPlanner.cpp"
+},
+{
+  "directory": "/home/micuks/Code/AutoPilot/New_Sample/Build/build_release/AVP",
+  "command": "/usr/bin/clang++  -DNOMINMAX -DUNICODE -D_ITERATOR_DEBUG_LEVEL=0 -D_UNICODE -I/home/micuks/Code/AutoPilot/New_Sample/Build/../include -I/home/micuks/Code/AutoPilot/New_Sample/Workshop/AVP/eigen/3.2.3/include/eigen3   -stdlib=libc++ -I/usr/include/libcxxabi -std=c++14 -O3 -DNDEBUG   -std=gnu++14 -o CMakeFiles/AVP.dir/src/main.cpp.o -c /home/micuks/Code/AutoPilot/New_Sample/Workshop/AVP/src/main.cpp",
+  "file": "/home/micuks/Code/AutoPilot/New_Sample/Workshop/AVP/src/main.cpp"
+},
+{
+  "directory": "/home/micuks/Code/AutoPilot/New_Sample/Build/build_release/LKA",
+  "command": "/usr/bin/clang++  -DNOMINMAX -DUNICODE -D_ITERATOR_DEBUG_LEVEL=0 -D_UNICODE -I/home/micuks/Code/AutoPilot/New_Sample/Build/../include   -stdlib=libc++ -I/usr/include/libcxxabi -std=c++14 -O3 -DNDEBUG   -std=gnu++14 -o CMakeFiles/LKA.dir/src/LKASample.cpp.o -c /home/micuks/Code/AutoPilot/New_Sample/Workshop/LKA/src/LKASample.cpp",
+  "file": "/home/micuks/Code/AutoPilot/New_Sample/Workshop/LKA/src/LKASample.cpp"
+},
+{
+  "directory": "/home/micuks/Code/AutoPilot/New_Sample/Build/build_release/HDMap",
+  "command": "/usr/bin/clang++  -DNOMINMAX -DUNICODE -D_ITERATOR_DEBUG_LEVEL=0 -D_UNICODE -I/home/micuks/Code/AutoPilot/New_Sample/HDMap/include -I/home/micuks/Code/AutoPilot/New_Sample/Build/../include   -stdlib=libc++ -I/usr/include/libcxxabi -std=c++14 -O3 -DNDEBUG   -std=gnu++14 -o CMakeFiles/HDMap.dir/src/HDMapSample.cpp.o -c /home/micuks/Code/AutoPilot/New_Sample/HDMap/src/HDMapSample.cpp",
+  "file": "/home/micuks/Code/AutoPilot/New_Sample/HDMap/src/HDMapSample.cpp"
+}
+]
