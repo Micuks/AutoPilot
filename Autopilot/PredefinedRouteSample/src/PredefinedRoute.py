@@ -29,7 +29,6 @@ def gpsCB(mainVehicleId, data):
 
 def SampleGetNearMostLane(pos):
 	SoBridgeLogOutput(0, "SampleGetNearMostLane:")
-
 	info = pySimOneIO.getNearMostLane(pos)
 	if info.exists == False:
 		SoBridgeLogOutput(0, "Not exists!")
@@ -82,6 +81,7 @@ def GetGenerateRoutePath():
 
 
 def calculateSteering(targetPath, GpsData, lastTargetPathIndex):
+    SoBridgeLogOutput(0, "GpsData.posX:%s,GpsData.posY:%s" % (GpsData.posX, GpsData.posY))
     pts = list()
     for i in targetPath:
         tmp_value = pow(GpsData.posX-i.get('x'), 2) + pow(GpsData.posY-i.get('y'), 2)
@@ -101,6 +101,7 @@ def calculateSteering(targetPath, GpsData, lastTargetPathIndex):
     MinProgDist = 3
     ProgTime = 0.8
     MainVehicleSpeed = math.sqrt(pow(GpsData.velX, 2) + pow(GpsData.velY, 2) + pow(GpsData.velZ, 2))
+    SoBridgeLogOutput(0, "MainVehicleSpeed:%s" % MainVehicleSpeed)
 
     if MainVehicleSpeed * ProgTime > MinProgDist:
         progDist = MainVehicleSpeed * ProgTime
@@ -157,13 +158,24 @@ if __name__ == '__main__':
     targetPath = getTargetPath()
 
     while(1):
+        while (1):
+            if SoAPIGetCaseRunStatus() == 1:
+                SoBridgeLogOutput(0, "case stop")
+                break
+            if not SoGetGps(0, SimOne_Data_Gps_Test) or SimOne_Data_Gps_Test.timestamp <= 0:
+                SoBridgeLogOutput(0, "gps return 0, wait")
+                time.sleep(0.5)
+            else:
+                SoBridgeLogOutput(0, "gps return ok")
+                break
+
         if SoAPIGetCaseRunStatus() == 1:
             SoBridgeLogOutput(0, "case stop")
             break
-        SoGetGps(0, SimOne_Data_Gps_Test)
 
+        SoGetGps(0, SimOne_Data_Gps_Test)
         steering, lastTargetPathIndex = calculateSteering(targetPath, SimOne_Data_Gps_Test, lastTargetPathIndex)
-        SoBridgeLogOutput(0, "steering:%s" % steering)
+        SoBridgeLogOutput(0, "steering, lastTargetPathIndex:%s%s" % (steering, lastTargetPathIndex))
 
         if math.sqrt(pow(SimOne_Data_Gps_Test.velX, 2) + pow(SimOne_Data_Gps_Test.velY, 2) * 3.6) > 40:
             setDriver(0, 1, steering)
