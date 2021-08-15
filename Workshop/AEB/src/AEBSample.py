@@ -3,13 +3,11 @@
 import pySimOneIO
 import math
 import heapq
-import sys
-import time
 from SimOneIOStruct import *
 
 case_info = SimOne_Data_CaseInfo()
-SimOne_Data_Gps_Test = SimOne_Data_Gps()
-#SimOne_Data_Gps_Test_Sync = SimOne_Data_Gps()
+#SimOne_Data_Gps_Test = SimOne_Data_Gps()
+SimOne_Data_Gps_Test_Sync = SimOne_Data_Gps()
 SimOne_Data_MainVehicle_Info_Test = SimOne_Data_MainVehicle_Info()
 SimOne_Data_MainVehicle_Status_Test = SimOne_Data_MainVehicle_Status()
 control = SimOne_Data_Control()
@@ -127,12 +125,12 @@ def DEBUG():
         0,
         "Gps data: pos=(%.1f, %.1f, %.1f), vel=(%.1f, %.1f, %.1f)"
         % (
-            SimOne_Data_Gps_Test.posX,
-            SimOne_Data_Gps_Test.posY,
-            SimOne_Data_Gps_Test.posZ,
-            SimOne_Data_Gps_Test.velX,
-            SimOne_Data_Gps_Test.velY,
-            SimOne_Data_Gps_Test.velZ,
+            SimOne_Data_Gps_Test_Sync.posX,
+            SimOne_Data_Gps_Test_Sync.posY,
+            SimOne_Data_Gps_Test_Sync.posZ,
+            SimOne_Data_Gps_Test_Sync.velX,
+            SimOne_Data_Gps_Test_Sync.velY,
+            SimOne_Data_Gps_Test_Sync.velZ,
         ),
     )
     SoBridgeLogOutput(0, "ObstacleSize: %d" % SimOne_Data_Obstacle_Test.obstacleSize)
@@ -153,7 +151,7 @@ def DEBUG():
         )
 if __name__ == '__main__':
 
-    inAEBState = False
+#    inAEBState = False
     isSimOneInitialized = False
     apiAllStart(True)
     SoSetDriverName(0, "testAEB")
@@ -181,8 +179,9 @@ if __name__ == '__main__':
             else:
                 print("Fetch GroundTruth failed")
         
-        if count == 0:
-            DEBUG()
+#        if count == 0:
+#            DEBUG()
+        DEBUG()
 
         mainVehiclePos = pySimOneIO.pySimPoint3D(SimOne_Data_Gps_Test_Sync.posX, SimOne_Data_Gps_Test_Sync.posY, SimOne_Data_Gps_Test_Sync.posZ)
         mainVehicleSpeed = calculateSpeed(SimOne_Data_Gps_Test_Sync.velX, SimOne_Data_Gps_Test_Sync.velY, SimOne_Data_Gps_Test_Sync.velZ)
@@ -194,9 +193,10 @@ if __name__ == '__main__':
         for i in range(0, SimOne_Data_Obstacle_Test.obstacleSize):
             obstaclePos = pySimOneIO.pySimPoint3D(SimOne_Data_Obstacle_Test.obstacle[i].posX, SimOne_Data_Obstacle_Test.obstacle[i].posY, SimOne_Data_Obstacle_Test.obstacle[i].posZ)
             obstacleLaneId = SampleGetNearMostLane(obstaclePos)
-            if mainVehicleLaneId == obstacleLaneId:
+            if mainVehicleLaneId.GetString() == obstacleLaneId.GetString():
                 obstacleDistance = planarDistance(mainVehiclePos, obstaclePos)
-
+                SoBridgeLogOutput(0, "obstacleDistance: %.1f" %
+                                  obstacleDistance)
                 if obstacleDistance < minDistance:
                     minDistance = obstacleDistance
                     potentialObstacleIndex = i
@@ -207,17 +207,17 @@ if __name__ == '__main__':
 
         potentialObstaclePos = pySimOneIO.pySimPoint3D(potentialObstacle.posX, potentialObstacle.posY, potentialObstacle.posZ)
 
-        if count == 0:
-            SoBridgeLogOutput(
-                0,
-                "potentialObstacle: pos=(%.1f, %.1f, %.1f), vel=%.1f"
-                % (
-                    potentialObstacle.posX,
-                    potentialObstacle.posY,
-                    potentialObstacle.posZ,
-                    obstacleSpeed,
-                ),
-            )
+#        if count == 0:
+        SoBridgeLogOutput(
+            0,
+            "potentialObstacle: pos=(%.1f, %.1f, %.1f), vel=%.1f"
+            % (
+                potentialObstacle.posX,
+                potentialObstacle.posY,
+                potentialObstacle.posZ,
+                obstacleSpeed,
+            ),
+        )
         sObstalce = 0
         tObstacle = 0
         sMainVehicle = 0
@@ -231,30 +231,40 @@ if __name__ == '__main__':
 
         flag=True
         if not SoGetDriverControl(0, control):
-            flag=False
+            flag = False
             SoBridgeLogOutput(2, "GetDriverControl Failed")
 
         if isObstalceBehind:
             defaultDistance = 10
             timeToCollision = abs(minDistance - defaultDistance) / (obstacleSpeed - mainVehicleSpeed)
             defautlTimeToCollision = 3.4
+#            if -timeToCollision < defautlTimeToCollision and timeToCollision < 0:
+#                inAEBState = True
             if -timeToCollision < defautlTimeToCollision and timeToCollision < 0:
-                inAEBState = True
-                control.brake = mainVehicleSpeed * 3.6 * 0.65 + 0.20
-
-            if inAEBState:
-                control.throttle = 0
-        if count == 0:
-            if flag:
-                if not SoApiSetDrive(0, control):
-                    SoBridgeLogOutput(2, "SetDrive Failed")
+                if timeToCollision < 0.6:
+                    control.brake = 1.0
+                elif timeToCollision < 1.0:
+                    control.brake = 0.6
                 else:
-                    SoBridgeLogOutput(0,"SetDrive Successfully")
+                    control.brake = 0.3
+                control.throttle = 0.0
 
-        count = 0
+#                control.brake = mainVehicleSpeed * 3.6 * 0.65 + 0.20
+
+#            if inAEBState:
+#                control.throttle = 0
+#        if count == 0:
+        if flag:
+            if not SoApiSetDrive(0, control):
+                SoBridgeLogOutput(2, "SetDrive Failed")
+            else:
+                SoBridgeLogOutput(0,"SetDrive Successfully")
+
+#        count = 0
 #        count+=1
-        if count >= 10:
-            count = 0
+#        if count >= 10:
+#            count = 0
+        SoBridgeLogOutput(0, "-" * 20 + "END OF FRAME" + "-" * 20)
         SoAPINextFrame(frame)
 
 

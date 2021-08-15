@@ -8,7 +8,8 @@ import time
 from SimOneIOStruct import *
 
 case_info = SimOne_Data_CaseInfo()
-SimOne_Data_Gps_Test_Sync = SimOne_Data_Gps()
+SimOne_Data_Gps_Test = SimOne_Data_Gps()
+#SimOne_Data_Gps_Test_Sync = SimOne_Data_Gps()
 SimOne_Data_MainVehicle_Info_Test = SimOne_Data_MainVehicle_Info()
 SimOne_Data_MainVehicle_Status_Test = SimOne_Data_MainVehicle_Status()
 control = SimOne_Data_Control()
@@ -30,7 +31,7 @@ def SampleGetNearMostLane(pos):
             SoBridgeLogOutput(0, "Not exists!")
         else:
             print("Not exists!")
-#        return
+        return
 #    if CLOUD_PLATFORM:
 #        SoBridgeLogOutput(0, "lane id:%s" % info.laneId.GetString())
 #    else:
@@ -59,7 +60,7 @@ def apiAllStart(isJoinTimeLoop):
         print("SoAPIGetCaseRunStatus: %s" % SoAPIGetCaseRunStatus())
 
     if SoAPIGetMainVehicleList(SimOne_Data_MainVehicle_Info_Test):
-        if CLOUD_PLATFORM:
+        if CLOUD_PLATFORM == 0:
             print("MainVehicle size: %s" % SimOne_Data_MainVehicle_Info_Test.size)
         else:
             SoBridgeLogOutput(0, "MainVehicle size: %s" % SimOne_Data_MainVehicle_Info_Test.size)
@@ -95,11 +96,11 @@ def calculateSpeed(velX, velY, velZ):
 
 
 def planarDistance(pt1, pt2):
-    SoBridgeLogOutput(1, "Distance is {}".format(math.sqrt(pow(pt1.posX -
+    SoBridgeLogOutput(0, "Distance is {}".format(math.sqrt(pow(pt1.posX -
                                                                pt2.posX, 2) +
                                                            pow(pt1.posY -
                                                                pt2.posY, 2))))
-    return math.sqrt(pow(pt1.posX-pt2.posX, 2) + pow(pt1.posY-pt2.posY, 2))
+    return math.sqrt(pow(pt1.x - pt2.x, 2) + pow(pt1.y - pt2.y, 2))
 
 
 def SampleGetLaneST(laneId, pos):
@@ -110,7 +111,7 @@ def SampleGetLaneST(laneId, pos):
     stInfo = pySimOneIO.getLaneST(laneId, pos)
     if stInfo.exists == False:
         if CLOUD_PLATFORM:
-            SoBridgeLogOutput(0, "Not exists!")
+            SoBridgeLogOutput(2, "Not exists!")
         else:
             print("Not exists!")
         return
@@ -162,7 +163,7 @@ if __name__ == '__main__':
     while(1):
         if SoAPIGetCaseRunStatus() == 1:
             if CLOUD_PLATFORM:
-                SoBridgeLogOutput(1, "case stop")
+                SoBridgeLogOutput(2, "case stop")
             else:
                 print("case stop")
             break
@@ -176,12 +177,13 @@ if __name__ == '__main__':
 
         if not SoAPIGetSimOneGroundTruth(SimOne_Data_Obstacle_Test):
             if CLOUD_PLATFORM:
-                SoBridgeLogOutput(2, "Fetch obstacle failed")
+                SoBridgeLogOutput(2, "Fetch GroundTruth failed")
             else:
-                print("Fetch obstacle failed")
+                print("Fetch GroundTruth failed")
         
-        if count == 0:
-            DEBUG()
+#        if count == 0:
+#            DEBUG()
+        DEBUG()
 
         mainVehiclePos = pySimOneIO.pySimPoint3D(SimOne_Data_Gps_Test_Sync.posX, SimOne_Data_Gps_Test_Sync.posY, SimOne_Data_Gps_Test_Sync.posZ)
         mainVehicleSpeed = calculateSpeed(SimOne_Data_Gps_Test_Sync.velX, SimOne_Data_Gps_Test_Sync.velY, SimOne_Data_Gps_Test_Sync.velZ)
@@ -193,9 +195,10 @@ if __name__ == '__main__':
         for i in range(0, SimOne_Data_Obstacle_Test.obstacleSize):
             obstaclePos = pySimOneIO.pySimPoint3D(SimOne_Data_Obstacle_Test.obstacle[i].posX, SimOne_Data_Obstacle_Test.obstacle[i].posY, SimOne_Data_Obstacle_Test.obstacle[i].posZ)
             obstacleLaneId = SampleGetNearMostLane(obstaclePos)
-            if mainVehicleLaneId == obstacleLaneId:
+            if mainVehicleLaneId.GetString() == obstacleLaneId.GetString():
                 obstacleDistance = planarDistance(mainVehiclePos, obstaclePos)
-
+                SoBridgeLogOutput(0, "obstacleDistance: %.1f" %
+                                  obstacleDistance)
                 if obstacleDistance < minDistance:
                     minDistance = obstacleDistance
                     potentialObstacleIndex = i
@@ -206,17 +209,17 @@ if __name__ == '__main__':
 
         potentialObstaclePos = pySimOneIO.pySimPoint3D(potentialObstacle.posX, potentialObstacle.posY, potentialObstacle.posZ)
 
-        if count == 0:
-            SoBridgeLogOutput(
-                0,
-                "potentialObstacle: pos=(%.1f, %.1f, %.1f), vel=%.1f"
-                % (
-                    potentialObstacle.posX,
-                    potentialObstacle.posY,
-                    potentialObstacle.posZ,
-                    obstacleSpeed,
-                ),
-            )
+#        if count == 0:
+        SoBridgeLogOutput(
+            0,
+            "potentialObstacle: pos=(%.1f, %.1f, %.1f), vel=%.1f"
+            % (
+                potentialObstacle.posX,
+                potentialObstacle.posY,
+                potentialObstacle.posZ,
+                obstacleSpeed,
+            ),
+        )
         sObstalce = 0
         tObstacle = 0
         sMainVehicle = 0
@@ -239,21 +242,31 @@ if __name__ == '__main__':
             defautlTimeToCollision = 3.4
             if -timeToCollision < defautlTimeToCollision and timeToCollision < 0:
                 inAEBState = True
-                control.brake = mainVehicleSpeed * 3.6 * 0.65 + 0.20
+            if timeToCollision < defautlTimeToCollision and timeToCollision > 0:
+                if timeToCollision < 0.6:
+                    control.brake = 1.0
+                elif timeToCollision < 1.0:
+                    control.brake = 0.6
+                else:
+                    control.brake = 0.3
+#                control.throttle = 0.0
+
+#                control.brake = mainVehicleSpeed * 3.6 * 0.65 + 0.20
 
             if inAEBState:
                 control.throttle = 0
-        if count == 0:
-            if flag:
-                if not SoApiSetDrive(0, control):
-                    SoBridgeLogOutput(2, "SetDrive Failed")
-                else:
-                    SoBridgeLogOutput(0,"SetDrive Successfully")
+#        if count == 0:
+        if flag:
+            if not SoApiSetDrive(0, control):
+                SoBridgeLogOutput(2, "SetDrive Failed")
+            else:
+                SoBridgeLogOutput(0,"SetDrive Successfully")
 
-        count = 0
+#        count = 0
 #        count+=1
-        if count >= 10:
-            count = 0
+#        if count >= 10:
+#            count = 0
+        SoBridgeLogOutput(0, "-" * 20 + "END OF FRAME" + "-" * 20)
         SoAPINextFrame(frame)
 
 
