@@ -8,8 +8,7 @@ import time
 from SimOneIOStruct import *
 
 case_info = SimOne_Data_CaseInfo()
-SimOne_Data_Gps_Test = SimOne_Data_Gps()
-#SimOne_Data_Gps_Test_Sync = SimOne_Data_Gps()
+SimOne_Data_Gps_Test_Sync = SimOne_Data_Gps()
 SimOne_Data_MainVehicle_Info_Test = SimOne_Data_MainVehicle_Info()
 SimOne_Data_MainVehicle_Status_Test = SimOne_Data_MainVehicle_Status()
 control = SimOne_Data_Control()
@@ -31,7 +30,7 @@ def SampleGetNearMostLane(pos):
             SoBridgeLogOutput(0, "Not exists!")
         else:
             print("Not exists!")
-        return
+#        return
 #    if CLOUD_PLATFORM:
 #        SoBridgeLogOutput(0, "lane id:%s" % info.laneId.GetString())
 #    else:
@@ -60,7 +59,7 @@ def apiAllStart(isJoinTimeLoop):
         print("SoAPIGetCaseRunStatus: %s" % SoAPIGetCaseRunStatus())
 
     if SoAPIGetMainVehicleList(SimOne_Data_MainVehicle_Info_Test):
-        if CLOUD_PLATFORM == 0:
+        if CLOUD_PLATFORM:
             print("MainVehicle size: %s" % SimOne_Data_MainVehicle_Info_Test.size)
         else:
             SoBridgeLogOutput(0, "MainVehicle size: %s" % SimOne_Data_MainVehicle_Info_Test.size)
@@ -96,11 +95,11 @@ def calculateSpeed(velX, velY, velZ):
 
 
 def planarDistance(pt1, pt2):
-    SoBridgeLogOutput(0, "Distance is {}".format(math.sqrt(pow(pt1.posX -
+    SoBridgeLogOutput(1, "Distance is {}".format(math.sqrt(pow(pt1.posX -
                                                                pt2.posX, 2) +
                                                            pow(pt1.posY -
                                                                pt2.posY, 2))))
-    return math.sqrt(pow(pt1.x - pt2.x, 2) + pow(pt1.y - pt2.y, 2))
+    return math.sqrt(pow(pt1.posX-pt2.posX, 2) + pow(pt1.posY-pt2.posY, 2))
 
 
 def SampleGetLaneST(laneId, pos):
@@ -111,7 +110,7 @@ def SampleGetLaneST(laneId, pos):
     stInfo = pySimOneIO.getLaneST(laneId, pos)
     if stInfo.exists == False:
         if CLOUD_PLATFORM:
-            SoBridgeLogOutput(2, "Not exists!")
+            SoBridgeLogOutput(0, "Not exists!")
         else:
             print("Not exists!")
         return
@@ -163,7 +162,7 @@ if __name__ == '__main__':
     while(1):
         if SoAPIGetCaseRunStatus() == 1:
             if CLOUD_PLATFORM:
-                SoBridgeLogOutput(2, "case stop")
+                SoBridgeLogOutput(1, "case stop")
             else:
                 print("case stop")
             break
@@ -177,9 +176,9 @@ if __name__ == '__main__':
 
         if not SoAPIGetSimOneGroundTruth(SimOne_Data_Obstacle_Test):
             if CLOUD_PLATFORM:
-                SoBridgeLogOutput(2, "Fetch GroundTruth failed")
+                SoBridgeLogOutput(2, "Fetch obstacle failed")
             else:
-                print("Fetch GroundTruth failed")
+                print("Fetch obstacle failed")
         
         if count == 0:
             DEBUG()

@@ -8,23 +8,22 @@ import time
 from SimOneIOStruct import *
 
 case_info = SimOne_Data_CaseInfo()
-SimOne_Data_Gps_Test = SimOne_Data_Gps()
-#SimOne_Data_Gps_Test_Sync = SimOne_Data_Gps()
+SimOne_Data_Gps_Test_Sync = SimOne_Data_Gps()
 SimOne_Data_MainVehicle_Info_Test = SimOne_Data_MainVehicle_Info()
 SimOne_Data_MainVehicle_Status_Test = SimOne_Data_MainVehicle_Status()
 control = SimOne_Data_Control()
 wayPoints = SimOne_Data_WayPoints()
 SimOne_Data_Obstacle_Test = SimOne_Data_Obstacle()
 
-CLOUD_PLATFORM = 1
+CLOUD_PLATFORM = 0
 M_PI = 3.14159265358979323846
 
 
 def SampleGetNearMostLane(pos):
-#    if CLOUD_PLATFORM:
-#        SoBridgeLogOutput(0, "SampleGetNearMostLane:")
-#    else:
-#        print("SampleGetNearMostLane:")
+    if CLOUD_PLATFORM:
+        SoBridgeLogOutput(0, "SampleGetNearMostLane:")
+    else:
+        print("SampleGetNearMostLane:")
     info = pySimOneIO.getNearMostLane(pos)
     if info.exists == False:
         if CLOUD_PLATFORM:
@@ -32,10 +31,10 @@ def SampleGetNearMostLane(pos):
         else:
             print("Not exists!")
         return
-#    if CLOUD_PLATFORM:
-#        SoBridgeLogOutput(0, "lane id:%s" % info.laneId.GetString())
-#    else:
-#        print("lane id:", info.laneId.GetString())
+    if CLOUD_PLATFORM:
+        SoBridgeLogOutput(0, "lane id:%s" % info.laneId.GetString())
+    else:
+        print("lane id:", info.laneId.GetString())
     return info.laneId
 
 
@@ -60,7 +59,7 @@ def apiAllStart(isJoinTimeLoop):
         print("SoAPIGetCaseRunStatus: %s" % SoAPIGetCaseRunStatus())
 
     if SoAPIGetMainVehicleList(SimOne_Data_MainVehicle_Info_Test):
-        if CLOUD_PLATFORM == 0:
+        if CLOUD_PLATFORM:
             print("MainVehicle size: %s" % SimOne_Data_MainVehicle_Info_Test.size)
         else:
             SoBridgeLogOutput(0, "MainVehicle size: %s" % SimOne_Data_MainVehicle_Info_Test.size)
@@ -96,74 +95,39 @@ def calculateSpeed(velX, velY, velZ):
 
 
 def planarDistance(pt1, pt2):
-    SoBridgeLogOutput(0, "Distance is {}".format(math.sqrt(pow(pt1.posX -
-                                                               pt2.posX, 2) +
-                                                           pow(pt1.posY -
-                                                               pt2.posY, 2))))
-    return math.sqrt(pow(pt1.x - pt2.x, 2) + pow(pt1.y - pt2.y, 2))
+    return math.sqrt(pow(pt1.posX-pt2.posX, 2) + pow(pt1.posY-pt2.posY, 2))
 
 
 def SampleGetLaneST(laneId, pos):
-#    if CLOUD_PLATFORM:
-#        SoBridgeLogOutput(0, "SampleGetLaneST:")
-#    else:
-#        print("SampleGetLaneST:")
+    if CLOUD_PLATFORM:
+        SoBridgeLogOutput(0, "SampleGetLaneST:")
+    else:
+        print("SampleGetLaneST:")
     stInfo = pySimOneIO.getLaneST(laneId, pos)
     if stInfo.exists == False:
         if CLOUD_PLATFORM:
-            SoBridgeLogOutput(2, "Not exists!")
+            SoBridgeLogOutput(0, "Not exists!")
         else:
             print("Not exists!")
         return
-#    if CLOUD_PLATFORM:
-#        SoBridgeLogOutput(0, "[%s,%s] relative to this lane:"%(stInfo.s,stInfo.t))
-#    else:
-#        print("[s,t] relative to this lane:", stInfo.s, ",", stInfo.t)
+    if CLOUD_PLATFORM:
+        SoBridgeLogOutput(0, "[%s,%s] relative to this lane:"%(stInfo.s,stInfo.t))
+    else:
+        print("[s,t] relative to this lane:", stInfo.s, ",", stInfo.t)
     return stInfo.s, stInfo.t
 
 
-def DEBUG():
-    SoBridgeLogOutput(
-        0,
-        "Gps data: pos=(%.1f, %.1f, %.1f), vel=(%.1f, %.1f, %.1f)"
-        % (
-            SimOne_Data_Gps_Test.posX,
-            SimOne_Data_Gps_Test.posY,
-            SimOne_Data_Gps_Test.posZ,
-            SimOne_Data_Gps_Test.velX,
-            SimOne_Data_Gps_Test.velY,
-            SimOne_Data_Gps_Test.velZ,
-        ),
-    )
-    SoBridgeLogOutput(0, "ObstacleSize: %d" % SimOne_Data_Obstacle_Test.obstacleSize)
-    for i in range(SimOne_Data_Obstacle_Test.obstacleSize):
-        SoBridgeLogOutput(
-            0,
-            "Obstacle %d: type %d, pos=(%.1f, %.1f, %.1f), vel=(%.1f, %.1f, %.1f)"
-            % (
-                SimOne_Data_Obstacle_Test.obstacle[i].id,
-                SimOne_Data_Obstacle_Test.obstacle[i].type.value,
-                SimOne_Data_Obstacle_Test.obstacle[i].posX,
-                SimOne_Data_Obstacle_Test.obstacle[i].posY,
-                SimOne_Data_Obstacle_Test.obstacle[i].posZ,
-                SimOne_Data_Obstacle_Test.obstacle[i].velX,
-                SimOne_Data_Obstacle_Test.obstacle[i].velY,
-                SimOne_Data_Obstacle_Test.obstacle[i].velZ,
-            ),
-        )
 if __name__ == '__main__':
 
     inAEBState = False
     isSimOneInitialized = False
     apiAllStart(True)
-    SoSetDriverName(0, "testAEB")
-
-    conunt = 0
+    SoSetDriverName(0, "AEB")
 
     while(1):
         if SoAPIGetCaseRunStatus() == 1:
             if CLOUD_PLATFORM:
-                SoBridgeLogOutput(2, "case stop")
+                SoBridgeLogOutput(0, "case stop")
             else:
                 print("case stop")
             break
@@ -171,18 +135,15 @@ if __name__ == '__main__':
         frame = SoAPIWait()
         if not SoAPIGetSimOneGps(SimOne_Data_Gps_Test_Sync):
             if CLOUD_PLATFORM:
-                SoBridgeLogOutput(2, "Fetch Gps Failed")
+                SoBridgeLogOutput(0, "Fetch Gps Failed")
             else:
                 print("Fetch Gps Failed")
 
         if not SoAPIGetSimOneGroundTruth(SimOne_Data_Obstacle_Test):
             if CLOUD_PLATFORM:
-                SoBridgeLogOutput(2, "Fetch GroundTruth failed")
+                SoBridgeLogOutput(0, "Fetch obstacle failed")
             else:
-                print("Fetch GroundTruth failed")
-        
-        if count == 0:
-            DEBUG()
+                print("Fetch obstacle failed")
 
         mainVehiclePos = pySimOneIO.pySimPoint3D(SimOne_Data_Gps_Test_Sync.posX, SimOne_Data_Gps_Test_Sync.posY, SimOne_Data_Gps_Test_Sync.posZ)
         mainVehicleSpeed = calculateSpeed(SimOne_Data_Gps_Test_Sync.velX, SimOne_Data_Gps_Test_Sync.velY, SimOne_Data_Gps_Test_Sync.velZ)
@@ -207,17 +168,6 @@ if __name__ == '__main__':
 
         potentialObstaclePos = pySimOneIO.pySimPoint3D(potentialObstacle.posX, potentialObstacle.posY, potentialObstacle.posZ)
 
-        if count == 0:
-            SoBridgeLogOutput(
-                0,
-                "potentialObstacle: pos=(%.1f, %.1f, %.1f), vel=%.1f"
-                % (
-                    potentialObstacle.posX,
-                    potentialObstacle.posY,
-                    potentialObstacle.posZ,
-                    obstacleSpeed,
-                ),
-            )
         sObstalce = 0
         tObstacle = 0
         sMainVehicle = 0
@@ -229,14 +179,11 @@ if __name__ == '__main__':
             sMainVehicle, tMainVehicle = SampleGetLaneST(potentialObstacleLaneId, mainVehiclePos)
             isObstalceBehind = False if sMainVehicle >= sObstalce else True
 
-        flag=True
-        if not SoGetDriverControl(0, control):
-            flag=False
-            SoBridgeLogOutput(2, "GetDriverControl Failed")
+        SoGetDriverControl(0, control)
 
         if isObstalceBehind:
             defaultDistance = 10
-            timeToCollision = abs(minDistance - defaultDistance) / (obstacleSpeed - mainVehicleSpeed)
+            timeToCollision = abs((minDistance - defaultDistance)) / (obstacleSpeed - mainVehicleSpeed)
             defautlTimeToCollision = 3.4
             if -timeToCollision < defautlTimeToCollision and timeToCollision < 0:
                 inAEBState = True
@@ -244,17 +191,8 @@ if __name__ == '__main__':
 
             if inAEBState:
                 control.throttle = 0
-        if count == 0:
-            if flag:
-                if not SoApiSetDrive(0, control):
-                    SoBridgeLogOutput(2, "SetDrive Failed")
-                else:
-                    SoBridgeLogOutput(0,"SetDrive Successfully")
+        SoApiSetDrive(0, control)
 
-        count = 0
-#        count+=1
-        if count >= 10:
-            count = 0
         SoAPINextFrame(frame)
 
 
