@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 import pySimOneIO
 import math
+import sys
+import time
 import heapq
 from SimOneIOStruct import *
 
@@ -238,6 +240,7 @@ if __name__ == '__main__':
             defaultDistance = 10
             timeToCollision = abs(minDistance - defaultDistance) / (obstacleSpeed - mainVehicleSpeed)
             defautlTimeToCollision = 3.4
+            SoBridgeLogOutput(0,"TimeToCollision: %.1f" % timeToCollision)
 #            if -timeToCollision < defautlTimeToCollision and timeToCollision < 0:
 #                inAEBState = True
             if -timeToCollision < defautlTimeToCollision and timeToCollision < 0:
