@@ -244,9 +244,9 @@ if __name__ == '__main__':
 #            if -timeToCollision < defautlTimeToCollision and timeToCollision < 0:
 #                inAEBState = True
             if -timeToCollision < defautlTimeToCollision and timeToCollision < 0:
-                if timeToCollision < 0.6:
+                if -timeToCollision < 0.6:
                     control.brake = 1.0
-                elif timeToCollision < 1.0:
+                elif -timeToCollision < 1.0:
                     control.brake = 0.6
                 else:
                     control.brake = 0.3
