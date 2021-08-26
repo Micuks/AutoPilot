@@ -96,7 +96,10 @@ def calculateSpeed(velX, velY, velZ):
 
 
 def planarDistance(pt1, pt2):
-    SoBridgeLogOutput(0, "Distance is %.1f" % math.sqrt(pow(pt1.x - pt2.x, 2) + pow(pt1.y - pt2.y, 2)))
+    SoBridgeLogOutput(0, "Distance is {}".format(math.sqrt(pow(pt1.posX -
+                                                               pt2.posX, 2) +
+                                                           pow(pt1.posY -
+                                                               pt2.posY, 2))))
     return math.sqrt(pow(pt1.x - pt2.x, 2) + pow(pt1.y - pt2.y, 2))
 
 
@@ -150,7 +153,7 @@ def DEBUG():
         )
 if __name__ == '__main__':
 
-#    inAEBState = False
+    inAEBState = False
     isSimOneInitialized = False
     apiAllStart(True)
     SoSetDriverName(0, "testAEB")
@@ -180,8 +183,6 @@ if __name__ == '__main__':
         
 #        if count == 0:
 #            DEBUG()
-        DEBUG()
-
         mainVehiclePos = pySimOneIO.pySimPoint3D(SimOne_Data_Gps_Test_Sync.posX, SimOne_Data_Gps_Test_Sync.posY, SimOne_Data_Gps_Test_Sync.posZ)
         mainVehicleSpeed = calculateSpeed(SimOne_Data_Gps_Test_Sync.velX, SimOne_Data_Gps_Test_Sync.velY, SimOne_Data_Gps_Test_Sync.velZ)
         minDistance = 10000000
@@ -194,7 +195,7 @@ if __name__ == '__main__':
             obstacleLaneId = SampleGetNearMostLane(obstaclePos)
             if mainVehicleLaneId.GetString() == obstacleLaneId.GetString():
                 obstacleDistance = planarDistance(mainVehiclePos, obstaclePos)
-                SoBridgeLogOutput(0, "obstacleLaneId: %d, mainVehicleLaneId: %d) % (obstacleLaneId, mainVehicleLaneId))
+                                  {}".format(obstacleLaneId, mainVehicleLaneId))
                 SoBridgeLogOutput(0, "obstacleDistance: %.1f" %
                                   obstacleDistance)
                 if obstacleDistance < minDistance:
@@ -228,26 +229,23 @@ if __name__ == '__main__':
             sObstalce, tObstacle = SampleGetLaneST(potentialObstacleLaneId, potentialObstaclePos)
             sMainVehicle, tMainVehicle = SampleGetLaneST(potentialObstacleLaneId, mainVehiclePos)
             isObstalceBehind = False if sMainVehicle >= sObstalce else True
-        SoBridgeLogOutput(
-                    0,
-                    "stObstacle: (%.1f, %.1f), stMainVehicle: (%.1f, %.1f)"
-                    % (sObstalce, tObstacle, sMainVehicle, tMainVehicle),
-                )
-                
-        flag = True
+
+        flag=True
         if not SoGetDriverControl(0, control):
             flag = False
             SoBridgeLogOutput(2, "GetDriverControl Failed")
 
         if isObstalceBehind:
             defaultDistance = 10
-            timeToCollision = (minDistance - defaultDistance) / (obstacleSpeed - mainVehicleSpeed)
+            timeToCollision = abs(minDistance - defaultDistance) / (obstacleSpeed - mainVehicleSpeed)
             defautlTimeToCollision = 3.4
             SoBridgeLogOutput(0,"TimeToCollision: %.1f" % timeToCollision)
-            if timeToCollision > defautlTimeToCollision and timeToCollision > 0:
-                if timeToCollision < 0.6:
+#            if -timeToCollision < defautlTimeToCollision and timeToCollision < 0:
+#                inAEBState = True
+            if -timeToCollision < defautlTimeToCollision and timeToCollision < 0:
+                if -timeToCollision < 0.6:
                     control.brake = 1.0
-                elif timeToCollision < 1.0:
+                elif -timeToCollision < 1.0:
                     control.brake = 0.6
                 else:
                     control.brake = 0.3
