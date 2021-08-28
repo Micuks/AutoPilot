@@ -52,7 +52,8 @@ int main()
             }
 
             SSD::SimPoint3D mainVehiclePos(pGps->posX, pGps->posY, pGps->posZ);
-            double mainVehicleSpeed = UtilMath::calculateSpeed(pGps->velX, pGps->velY, pGps->velZ);
+            //double mainVehicleSpeed = UtilMath::calculateSpeed(pGps->velX, pGps->velY, pGps->velZ);
+            double mainVehicleSpeed = pGps->velX;
 
             double minDistance = std::numeric_limits<double>::max();
             int potentialObstacleIndex = pObstacle->obstacleSize;
@@ -73,7 +74,9 @@ int main()
             }
 
             auto& potentialObstacle = pObstacle->obstacle[potentialObstacleIndex];
-            double obstacleSpeed = UtilMath::calculateSpeed(potentialObstacle.velX, potentialObstacle.velY, potentialObstacle.velZ);
+            //double obstacleSpeed = UtilMath::calculateSpeed(potentialObstacle.velX, potentialObstacle.velY, potentialObstacle.velZ);
+            double obstacleSpeed = potentialObstacle.velX;
+            //SimOneAPI::bridgeLogOutput(ELogLevel_Type::ELogLevelDebug, "obstacleSpeedX = %f, SpeedY = %f, speedZ = %f", potentialObstacle.velX, potentialObstacle.velY, potentialObstacle.velZ);
 
 
             SSD::SimPoint3D potentialObstaclePos(potentialObstacle.posX, potentialObstacle.posY, potentialObstacle.posZ);
@@ -110,19 +113,23 @@ int main()
             if (isObstalceBehind) {
                 //EGear Mode
 
-                double defaultDistance = 10.f;
+                double defaultDistance = 1.05f;
 
                 double timeToCollision = std::abs((minDistance - defaultDistance) / (obstacleSpeed - mainVehicleSpeed));
+                    double accel = (mainVehicleSpeed - obstacleSpeed) * (mainVehicleSpeed - obstacleSpeed) / (2 * std::abs(minDistance - defaultDistance));
                 //double timeToCollision = std::abs(minDistance - defaultDistance) * 2 / mainVehicleSpeed;
-                double defautlTimeToCollision = 3.4f;
-                //				if (-timeToCollision < defautlTimeToCollision && timeToCollision < 0) {
+                //double defaultTimeToCollision = 0.6f;
+            	double defaultTimeToCollision = 1.6339f;
+                //				if (-timeToCollision < defaultTimeToCollision && timeToCollision < 0) {
                 //					inAEBState = true;
                 //					pControl->brake = (float)(mainVehicleSpeed * 3.6 * 0.65 + 0.20);
                 //				}
 
-                if (timeToCollision < defautlTimeToCollision && timeToCollision > 0) {
+                if (timeToCollision < defaultTimeToCollision && timeToCollision > 0) {
                     inAEBState = true;
-
+                }
+                else if(inAEBState) {
+                    inAEBState = false;
                 }
                 if (inAEBState) {
                     pControl->gear = EGearMode_Drive;
