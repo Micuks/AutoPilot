@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.8.0)
+set(CLOUD_PLATFORM 1)
+set(Cloud_Platform 1)
 
 IF (UNIX)
 	set(CMAKE_C_COMPILER "/usr/bin/clang")
