@@ -63,7 +63,8 @@ int main()
                 SSD::SimPoint3D obstaclePos(pObstacle->obstacle[i].posX, pObstacle->obstacle[i].posY, pObstacle->obstacle[i].posZ);
                 SSD::SimString obstacleLaneId = SampleGetNearMostLane(obstaclePos);
                 if (mainVehicleLaneId == obstacleLaneId) {
-                    double obstacleDistance = UtilMath::planarDistance(mainVehiclePos, obstaclePos);
+//                    double obstacleDistance = UtilMath::planarDistance(mainVehiclePos, obstaclePos);
+                    double obstacleDistance = std::abs(mainVehiclePos.x - obstaclePos.x);
 
                     if (obstacleDistance < minDistance) {
                         minDistance = obstacleDistance;
@@ -113,32 +114,25 @@ int main()
             if (isObstalceBehind) {
                 //EGear Mode
 
-                double defaultDistance = 1.05f;
+                double defaultDistance = 1.55f;
 
                 double timeToCollision = std::abs((minDistance - defaultDistance) / (obstacleSpeed - mainVehicleSpeed));
-                    double accel = (mainVehicleSpeed - obstacleSpeed) * (mainVehicleSpeed - obstacleSpeed) / (2 * std::abs(minDistance - defaultDistance));
-                //double timeToCollision = std::abs(minDistance - defaultDistance) * 2 / mainVehicleSpeed;
-                //double defaultTimeToCollision = 0.6f;
-            	double defaultTimeToCollision = 1.6339f;
-                //				if (-timeToCollision < defaultTimeToCollision && timeToCollision < 0) {
-                //					inAEBState = true;
-                //					pControl->brake = (float)(mainVehicleSpeed * 3.6 * 0.65 + 0.20);
-                //				}
+                double accel = std::pow((mainVehicleSpeed - obstacleSpeed), 2) / (2 * (minDistance - defaultDistance));
+                double defaultTimeToCollision = 2.74f;
+                SimOneAPI::bridgeLogOutput(ELogLevel_Type::ELogLevelDebug,"timeToCollision: %f", timeToCollision); 
 
                 if (timeToCollision < defaultTimeToCollision && timeToCollision > 0) {
                     inAEBState = true;
                 }
-                else if(inAEBState) {
-                    inAEBState = false;
-                }
                 if (inAEBState) {
+                    SimOneAPI::bridgeLogOutput(ELogLevel_Type::ELogLevelDebug, "--- In AEB State ---");
                     pControl->gear = EGearMode_Drive;
                     pControl->throttleMode = EThrottleMode_Accel;
                     pControl->isManualGear = 0;
-                    double accel = (mainVehicleSpeed - obstacleSpeed) * (mainVehicleSpeed - obstacleSpeed) / (2 * std::abs(minDistance - defaultDistance));
                     pControl->throttle = -accel;
-                    SimOneAPI::bridgeLogOutput(ELogLevel_Type::ELogLevelDebug, "Acceleration: %f, distance: %f", accel, std::abs(minDistance));
-                        //	pControl->throttle = 0.;
+                    SimOneAPI::bridgeLogOutput(ELogLevel_Type::ELogLevelDebug, "Acceleration: %f,calculatedAccel: %f, distance: %f", pGps->accelX, accel, std::abs(minDistance));
+
+                    //	pControl->throttle = 0.;
                 }
             }	
             SimOneSM::SetDrive(0, pControl.get());
