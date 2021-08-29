@@ -118,12 +118,7 @@ int main()
 
                 double timeToCollision = std::abs((minDistance - defaultDistance) / (obstacleSpeed - mainVehicleSpeed));
                 SimOneAPI::bridgeLogOutput(ELogLevel_Type::ELogLevelDebug, "TimeToCollision: %f", timeToCollision);
-                //double timeToCollision = std::abs(minDistance - defaultDistance) * 2 / mainVehicleSpeed;
                 double defaultTimeToCollision = 2.4f;
-                //				if (-timeToCollision < defaultTimeToCollision && timeToCollision < 0) {
-                //					inAEBState = true;
-                //					pControl->brake = (float)(mainVehicleSpeed * 3.6 * 0.65 + 0.20);
-                //				}
 
                 if (timeToCollision < defaultTimeToCollision && timeToCollision > 0) {
                     inAEBState = true;
