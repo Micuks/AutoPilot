@@ -21,6 +21,7 @@ public:
 		pControl->handbrake = false;
 		pControl->isManualGear = false;
 		pControl->gear = static_cast<EGearMode>(1);
+        SimOneAPI::bridgeLogOutput(ELogLevel_Type::ELogLevelDebug, "ESteeringMode: %s", pControl->steeringMode);
 		SimOneSM::SetDrive(0, pControl.get());
 	}
 	

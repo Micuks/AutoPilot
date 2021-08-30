@@ -66,13 +66,11 @@ double calculateSteering(const SSD::SimPoint3DVector& targetPath, SimOne_Data_Gp
 		}
 	}
 
-
 	int forwardIndex = 0;
 	float minProgDist = 3.f;
 	float progTime = 0.8f;
 	float mainVehicleSpeed = sqrtf(pGps->velX * pGps->velX + pGps->velY * pGps->velY + pGps->velZ * pGps->velZ);
 	float progDist = mainVehicleSpeed * progTime > minProgDist ? mainVehicleSpeed * progTime : minProgDist;
-
 
 	for (; index < targetPath.size(); ++index)
 	{
@@ -88,6 +86,7 @@ double calculateSteering(const SSD::SimPoint3DVector& targetPath, SimOne_Data_Gp
 	double alfa = atan2(targetPath[forwardIndex].y - pGps->posY, targetPath[forwardIndex].x - pGps->posX) - psi;
 	double ld = static_cast<double>(sqrt(pow(targetPath[forwardIndex].y - pGps->posY, 2) + pow(targetPath[forwardIndex].x - pGps->posX, 2)));
 	double steering = static_cast<double>(-atan2(2. * (1.3 + 1.55) * sin(alfa), ld) * 36. / (7. * M_PI));
+
 	return steering;
 }
 
