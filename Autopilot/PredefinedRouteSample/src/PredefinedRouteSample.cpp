@@ -95,7 +95,7 @@ double calculateSteering(const SSD::SimPoint3DVector& targetPath, SimOne_Data_Gp
 int main()
 {
 	StartSimOne::WaitSimOneIsOk(true);
-	SimOneSM::SetDriverName(0, "Predefined");
+	SimOneSM::SetDriverName(0, "MicuksPreDeRo");
 	//Wait for the Sim-One case to run
 	while (1) {
 		int frame = SimOneAPI::Wait();
